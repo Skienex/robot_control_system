@@ -1,0 +1,17 @@
+# rust target ordner
+**/target/
+
+# log files
+*.log
+
+# idea folders
+.idea/
+.vscode/
+*.iml
+
+# env files
+.env
+
+# os files
+.DS_Store
+Thumbs.db
