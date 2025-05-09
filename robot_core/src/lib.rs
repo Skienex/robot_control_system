@@ -4,8 +4,6 @@ use robot_web::CommandPayload;
 use std::sync::mpsc;
 use std::thread;
 
-const MIN_PWM: u16 = 1000;
-const MAX_PWM: u16 = 2500;
 const FREQ: f32 = 200.0; // 50 Hz
 
 pub fn main() {
@@ -77,7 +75,7 @@ pub fn main() {
 
 fn speed_to_pulse(speed: i64) -> u16 {
     // Clamp auf erlaubten Bereich
-    let x = speed.max(-100).min(100);
+    let x = speed.clamp(-100, 100);
 
     if (-7..=7).contains(&x) {
         1450
