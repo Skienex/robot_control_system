@@ -12,7 +12,7 @@ members = [
     "robot_main",
     "robot_core",
     "robot_web",
-    "robot_controller"
+    # "robot_controller"
 ]
 default-members = ["robot_main"]
 

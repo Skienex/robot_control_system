@@ -7,3 +7,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
+env_logger = "0.11.8"
+log.workspace = true
+robot_web = { path = "../robot_web" }
+pca9685-rppal = "0.1.0"

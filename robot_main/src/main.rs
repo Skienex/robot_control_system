@@ -1,3 +1,3 @@
 fn main() {
-    println!("Hello, world!");
+    robot_core::main();
 }
