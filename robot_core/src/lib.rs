@@ -1,8 +1,8 @@
+use log::{error, info, warn};
+use pca9685_rppal::Pca9685;
+use robot_web::CommandPayload;
 use std::sync::mpsc;
 use std::thread;
-use log::{info, error, warn};
-use robot_web::CommandPayload;
-use pca9685_rppal::Pca9685;
 
 const MIN_PWM: u16 = 1000;
 const MAX_PWM: u16 = 2500;
@@ -36,19 +36,20 @@ pub fn main() {
     loop {
         match rx.recv() {
             Ok(command_payload) => {
-                info!("[Main Thread] Befehl vom Server empfangen: {:?}", command_payload);
+                info!(
+                    "[Main Thread] Befehl vom Server empfangen: {:?}",
+                    command_payload
+                );
                 match command_payload.command.as_str() {
                     "speed" => {
                         if let Some(i) = command_payload.value.as_i64() {
                             info!("[Main Thread] Successfully received speed value");
                             controller.set_pwm(0, 0, speed_to_pulse(i)).unwrap()
-                        } else { 
+                        } else {
                             info!("[Main Thread] No speed value provided")
                         }
                     }
-                    "direction" => {
-                        
-                    }
+                    "direction" => {}
                     "headlights" => {}
                     "horn" => {}
                     "turbo" => {}
@@ -57,7 +58,10 @@ pub fn main() {
                 }
             }
             Err(e) => {
-                error!("[Main Thread] Fehler beim Empfangen vom Kanal (Server vermutlich beendet): {}", e);
+                error!(
+                    "[Main Thread] Fehler beim Empfangen vom Kanal (Server vermutlich beendet): {}",
+                    e
+                );
                 break;
             }
         }

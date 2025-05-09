@@ -1,13 +1,14 @@
 use axum::{
-    routing::{get, post},
+    extract::State,
     http::StatusCode,
     response::IntoResponse,
-    Json, Router, extract::State,
+    routing::{get, post},
+    Json, Router,
 };
+use log::{error, info, warn};
 use serde::Deserialize;
-use std::sync::mpsc;
 use std::net::SocketAddr;
-use log::{info, error, warn};
+use std::sync::mpsc;
 
 // Diese Struktur wird über den Channel gesendet und als JSON empfangen/gesendet.
 // Sie muss `Clone` sein, für den State in Axum und das Senden über den Channel.
@@ -31,26 +32,33 @@ async fn status_handler() -> impl IntoResponse {
 }
 
 async fn command_handler(
-    State(state): State<AppState>, // Extrahiert den AppState
+    State(state): State<AppState>,       // Extrahiert den AppState
     Json(payload): Json<CommandPayload>, // Extrahiert und deserialisiert die JSON-Payload
 ) -> impl IntoResponse {
     info!("POST /command empfangen: {:?}", payload);
 
-    match state.command_tx.send(payload.clone()) { // Klonen, da payload auch für die Antwort verwendet wird
+    match state.command_tx.send(payload.clone()) {
+        // Klonen, da payload auch für die Antwort verwendet wird
         Ok(_) => {
             info!("Befehl erfolgreich an den Hauptthread gesendet.");
-            (StatusCode::OK, Json(serde_json::json!({
-                "status": "command_received_and_forwarded",
-                "command": payload.command,
-                "value": payload.value
-            })))
+            (
+                StatusCode::OK,
+                Json(serde_json::json!({
+                    "status": "command_received_and_forwarded",
+                    "command": payload.command,
+                    "value": payload.value
+                })),
+            )
         }
         Err(e) => {
             error!("Fehler beim Senden des Befehls an den Hauptthread: {}", e);
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
-                "status": "error_forwarding_command",
-                "error": format!("Konnte Befehl nicht intern weiterleiten: {}", e)
-            })))
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "status": "error_forwarding_command",
+                    "error": format!("Konnte Befehl nicht intern weiterleiten: {}", e)
+                })),
+            )
         }
     }
 }
@@ -59,7 +67,8 @@ pub async fn run_axum_server(
     host: String,
     port: u16,
     command_tx: mpsc::Sender<CommandPayload>,
-) -> Result<(), Box<dyn std::error::Error>> { // Box<dyn Error> für generisches Fehlerhandling
+) -> Result<(), Box<dyn std::error::Error>> {
+    // Box<dyn Error> für generisches Fehlerhandling
     let app_state = AppState { command_tx };
 
     // Definiere die Routen
@@ -91,10 +100,14 @@ pub fn start_axum_server_in_thread(
 
     let rt = match tokio::runtime::Builder::new_current_thread()
         .enable_all()
-        .build() {
+        .build()
+    {
         Ok(r) => r,
         Err(e) => {
-            error!("Konnte Tokio Runtime für Server-Thread nicht erstellen: {}", e);
+            error!(
+                "Konnte Tokio Runtime für Server-Thread nicht erstellen: {}",
+                e
+            );
             return;
         }
     };
