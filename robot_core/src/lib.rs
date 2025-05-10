@@ -1,4 +1,4 @@
-use log::{error, info, log, warn};
+use log::{error, info, warn};
 use pca9685_rppal::Pca9685;
 use robot_web::CommandPayload;
 use rppal::gpio::Gpio;
