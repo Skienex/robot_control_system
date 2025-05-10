@@ -1,7 +1,7 @@
 use log::{error, info, log, warn};
 use pca9685_rppal::Pca9685;
-use rppal::gpio::Gpio;
 use robot_web::CommandPayload;
+use rppal::gpio::Gpio;
 use std::sync::mpsc;
 use std::thread;
 
@@ -57,7 +57,7 @@ pub fn main() {
                     "direction" => {
                         if let Some(d) = command_payload.value.as_i64() {
                             info!("[Main Thread] Successfully received direction value");
-                            controller.set_pwm(0, 0, direction_to_pulse(d)).unwrap(); // TODO: Direction to pulse
+                            controller.set_pwm(0, 0, direction_to_pulse(d)).unwrap();
                         } else {
                             info!("[Main Thread] No direction value provided")
                         }
