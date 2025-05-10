@@ -1275,6 +1275,7 @@ dependencies = [
  "log",
  "pca9685-rppal",
  "robot_web",
+ "rppal",
 ]
 
 [[package]]
