@@ -9,11 +9,9 @@ const FREQ: f32 = 200.0; // 50 Hz
 
 const FRONT_LEFT_PULSE: u16 = 1150;
 const FRONT_RIGHT_PULSE: u16 = 305;
-const FRONT_STRAIGHT_PULSE: u16 = (FRONT_LEFT_PULSE + FRONT_RIGHT_PULSE) / 2;
 
 const BACK_LEFT_PULSE: u16 = 1375;
 const BACK_RIGHT_PULSE: u16 = 2185;
-const BACK_STRAIGHT_PULSE: u16 = (BACK_LEFT_PULSE + BACK_RIGHT_PULSE) / 2;
 const MOTOR_CHANNEL: u8 = 0;
 const FRONT_STEERING_CHANNEL: u8 = 1;
 const BACK_STEERING_CHANNEL: u8 = 2;
@@ -228,8 +226,7 @@ fn speed_to_pulse(speed: i64, turbo: bool) -> u16 {
     } else if x < -DEAD_ZONE {
         let slope = 200.0 / (100.0 - (DEAD_ZONE as f32 + 1.0));
         let pulse_val = NEUTRAL_PULSE + (x as f32 + DEAD_ZONE as f32) * slope;
-        let mut final_pulse = pulse_val.round() as u16;
-        final_pulse
+        pulse_val.round() as u16
     } else {
         let slope = 750.0 / (100.0 - (DEAD_ZONE as f32 + 1.0));
         let pulse_val = NEUTRAL_PULSE + (x as f32 - DEAD_ZONE as f32) * slope;
